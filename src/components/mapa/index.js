@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Dimensions, Text, Image} from 'react-native';
 import {mapStyle} from './style';
 import MapView, {Marker, Callout, MarkerAnimated} from 'react-native-maps';
-import ApiBairro from '../../controllers/apiBairro';
+//import ApiBairro from '../../controllers/apiBairro';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function mapa({

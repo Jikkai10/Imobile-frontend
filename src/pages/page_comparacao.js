@@ -23,7 +23,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import ApiBairro from '../controllers/apiBairro';
+//import ApiBairro from '../controllers/apiBairro';
 
 export default function Comparacao({route, navigation}) {
   React.useLayoutEffect(() => {

@@ -6,11 +6,12 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
 } from 'react-native';
+import {Container,ContainerOptions,Title} from './styles';
 export default function customPicker({label, data, currentIndex, onSelected}) {
   return (
-    <>
-      <Text style={styles.title}>{label}</Text>
-      <View style={styles.wrapperHorizontal}>
+    <Container>
+      <Title>{label}</Title>
+      <ContainerOptions>
         <FlatList
           bounces
           horizontal
@@ -38,26 +39,16 @@ export default function customPicker({label, data, currentIndex, onSelected}) {
             );
           }}
         />
-      </View>
-    </>
+      </ContainerOptions>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapperHorizontal: {
-    height: 54,
-    justifyContent: 'center',
-    color: 'black',
-    marginBottom: 12,
-  },
-  title: {
-    fontWeight: 'bold',
-    marginVertical: 4,
-  },
   itemStyleHorizontal: {
-    marginRight: 10,
-    height: 50,
-    padding: 8,
+    marginRight: 5,
+    height: 25,
+    padding: 5,
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 25,
@@ -66,6 +57,6 @@ const styles = StyleSheet.create({
   },
   itemSelectedStyleHorizontal: {
     borderWidth: 2,
-    borderColor: '#00f',
+    borderColor: '#000',
   },
 });

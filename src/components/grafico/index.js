@@ -3,45 +3,36 @@ import FlashMessage, {showMessage} from 'react-native-flash-message';
 import {LineChart} from 'react-native-chart-kit';
 import {StyleSheet, View, Dimensions, Modal, Text} from 'react-native';
 import ModalGrafico from '../modalGrafico';
+import {ModalContainer} from '../../pages/pageRegionCap/regions/style';
 
-export default function grafico({
-  labels,
-  data,
-  ySufixo,
-  yPrefixo,
-  legenda,
-  anoValorFilter,
-}) {
+export default function grafico({labels, data, legenda, sufixo = ''}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [ano, setAno] = useState();
   const [color, setColor] = useState();
-  const [anoAnterior, setAnoAnterior] = useState();
-  const [tipo, setTipo] = useState();
   const [valor, setValor] = useState();
-  const [porcentagem, setPorcentagem] = useState();
 
   return (
-    <View>
+    <>
       <LineChart
         data={{
           labels: labels,
           datasets: data,
           legend: legenda,
         }}
-        formatYLabel={(value) => {
+        /*formatYLabel={(value) => {
           if (yPrefixo === '') {
             return value;
           } else {
             let val = value / 1000;
             return `${val.toFixed(0)} K`;
           }
-        }}
+        }}*/
         width={Dimensions.get('window').width * 0.97}
         height={300}
         verticalLabelRotation={70}
-        yAxisSuffix={ySufixo}
-        yAxisLabel={yPrefixo}
-        yLabelsOffset={5}
+        yAxisSuffix={sufixo}
+        //yAxisLabel={yPrefixo}
+        //yLabelsOffset={5}
         chartConfig={{
           backgroundColor: '#fff',
           backgroundGradientFrom: '#fff',
@@ -57,48 +48,7 @@ export default function grafico({
           setModalVisible(true);
           setAno(labels[index]);
           setColor(getColor(1));
-          if (yPrefixo === '') {
-            setTipo(2);
-            if (labels[0] === labels[labels.lenght - 1]) {
-              setValor(0);
-              showMessage({
-                message: `Crecimento de 0 %`,
-                backgroundColor: getColor(0.9),
-              });
-            } else if (
-              labels[index] === labels[0] ||
-              labels[index] === labels[1]
-            ) {
-              setValor(value);
-              showMessage({
-                message: `Crecimento de ${value} %`,
-                backgroundColor: getColor(0.9),
-              });
-            } else {
-              let valor = anoValorFilter[index].data * 100;
-              valor /= anoValorFilter[index - 1].data;
-              valor -= 100;
-              setTipo(3);
-              setValor(value);
-              setPorcentagem(valor.toFixed(2));
-              setAnoAnterior(labels[index - 1]);
-              showMessage({
-                message: `Crecimento de ${value} %`,
-                description: `${valor.toFixed(2)} % em relação a ${
-                  labels[index - 1]
-                }`,
-                backgroundColor: getColor(0.9),
-              });
-            }
-          } else {
-            setValor(value);
-            setTipo(1);
-            showMessage({
-              message: `R$ ${value}`,
-              description: `Média das vendas de ${labels[index]}`,
-              backgroundColor: getColor(0.9),
-            });
-          }
+          setValor(value);
         }}
         withShadow={false}
         fromZero={false}
@@ -106,16 +56,14 @@ export default function grafico({
         style={styles.containerGrafico}
       />
       <ModalGrafico
-        valor={valor}
         ano={ano}
-        porcentagem={porcentagem}
-        anoAnterior={anoAnterior}
-        tipo={tipo}
-        setModalVisible={setModalVisible}
-        modalVisible={modalVisible}
+        valor={valor}
         color={color}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        sufixo={sufixo}
       />
-    </View>
+    </>
   );
 }
 
