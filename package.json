@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@mgcrea/react-native-backdrop-provider": "^0.8.9",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/toolbar-android": "^0.1.0-rc.2",
@@ -29,11 +30,13 @@
     "react-native": "0.62.2",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-chart-kit": "^5.6.0",
+    "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^2.0.2",
     "react-native-f2chart": "^1.1.0",
     "react-native-flash-message": "^0.1.15",
     "react-native-gesture-handler": "^1.6.1",
-    "react-native-maps": "^0.27.1",
+    "react-native-maps": "https://github.com/xDemon200/react-native-maps",
+    "react-native-propel-kit": "^0.8.9",
     "react-native-pure-chart": "^0.0.24",
     "react-native-reanimated": "^1.9.0",
     "react-native-safe-area-context": "^3.0.3",
@@ -42,6 +45,7 @@
     "react-native-svg-charts": "^5.4.0",
     "react-native-tab-view": "^2.15.1",
     "react-native-vector-icons": "^6.6.0",
+    "react-native-yearpicker": "^1.7.3",
     "recharts": "^1.8.5",
     "require-dir": "^1.2.0",
     "styled-components": "^5.1.1"

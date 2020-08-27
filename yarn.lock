@@ -1035,6 +1035,52 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@mgcrea/react-native-action-sheet-provider@0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@mgcrea/react-native-action-sheet-provider/-/react-native-action-sheet-provider-0.8.9.tgz#b10fafe2d11924a3fc0385252fdab38434db61af"
+  integrity sha512-Oe7H+3EFl4TOCRbzdIMFEmSlO4waxf83JnS3sTHXK8c6XQ9iIFn1ohXULcFT0GV/jGbMPyuNN1hu+hwpNbGfuQ==
+  dependencies:
+    "@mgcrea/react-native-backdrop-provider" "0.8.9"
+
+"@mgcrea/react-native-backdrop-provider@0.8.9", "@mgcrea/react-native-backdrop-provider@^0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@mgcrea/react-native-backdrop-provider/-/react-native-backdrop-provider-0.8.9.tgz#c0f9856998c2edb6f9341ce7e1b7efaabfee9076"
+  integrity sha512-s7N9qhHM1vypZTaVQWNCFKbQPITdvmAo7JjlXrD0b9111pkzRxmHPc0/Fy+jUEF+GVdvHm0Rt183KOql+Gx+/Q==
+
+"@mgcrea/react-native-button@0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@mgcrea/react-native-button/-/react-native-button-0.8.9.tgz#7cfd214c869e2a94288354a6ccffaeeeb3e3c037"
+  integrity sha512-gJlh/anE5wjgdYGYIG9MTaAmLi2uObxiv3V9S2yNkYT+SyofflEvluUXvqp3HoCxR9IvXYG0FkSqlWaFZokdbg==
+
+"@mgcrea/react-native-date-picker@0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@mgcrea/react-native-date-picker/-/react-native-date-picker-0.8.9.tgz#0e61247d65f4c46f1b75c6e32b17658ccf916e70"
+  integrity sha512-iso+XgA9QlVf/MyFUSW4EHpHPMTLO88N1xYVybIAVxZbPhFpTReZr18Xy4Y7vhmtssyoPjeoboQa+Ps6qNO25Q==
+  dependencies:
+    "@mgcrea/react-native-button" "0.8.9"
+    "@mgcrea/react-native-modal-dialog" "0.8.9"
+
+"@mgcrea/react-native-modal-dialog@0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@mgcrea/react-native-modal-dialog/-/react-native-modal-dialog-0.8.9.tgz#75b346e40da523666d55f3516dfb7daff0f64b51"
+  integrity sha512-ZeAwuv8XjdvjS1GE5Xm37+WGKTc37eD4jYC0xYHbZxP6IPOqGiXuONPF9PewCjBPvE3yAW05zFB1g7iwdYrmrg==
+  dependencies:
+    "@mgcrea/react-native-backdrop-provider" "0.8.9"
+
+"@mgcrea/react-native-picker@0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@mgcrea/react-native-picker/-/react-native-picker-0.8.9.tgz#c1095c16786b9db2893dd2856776e7876e005b25"
+  integrity sha512-uBOYpBuenAfcxQJceBgpfkZ3GZiBI6SsrtENezQlzpBGewBa5HmYhtYFMB79iyzOddAnlGoaomtRfJvoINbePg==
+
+"@mgcrea/react-native-select@0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@mgcrea/react-native-select/-/react-native-select-0.8.9.tgz#6c30e6eb3a73ab3732946cb14e2940785fa212b0"
+  integrity sha512-DabNXcDZOpr6vTL+ZFVwFzSWueh7XpWVRxb2CLxZzWq7jSAPdZnNZNf/HpTIZ9sttj9D2MTJ/KzLcYC3NII5tw==
+  dependencies:
+    "@mgcrea/react-native-button" "0.8.9"
+    "@mgcrea/react-native-modal-dialog" "0.8.9"
+    "@mgcrea/react-native-picker" "0.8.9"
+
 "@ptomasroos/react-native-multi-slider@^2.2.2":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@ptomasroos/react-native-multi-slider/-/react-native-multi-slider-2.2.2.tgz#35a97fb8c355627c6a2ded010b360ac5728b44ad"
@@ -1291,6 +1337,11 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
   integrity sha512-OCutwjDZ4aFS6PB1UZ988C4YgwlBHJd6wCeQqaLdmadZ/7e+w79+hbMUFC1QXDNCmdyoRfAFdm0RypzwR+Qpag==
+
+"@types/geojson@^7946.0.7":
+  version "7946.0.7"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.7.tgz#c8fa532b60a0042219cdf173ca21a975ef0666ad"
+  integrity sha512-wE2v81i4C4Ol09RtsWFAqg3BUitWbHSpSlIo+bNdsCJijO9sjme+zm+73ZMCa/qMC8UEERxzGbvmr1cffo2SiQ==
 
 "@types/graceful-fs@^4.1.2":
   version "4.1.3"
@@ -5707,6 +5758,11 @@ mkdirp@^0.5.1:
   dependencies:
     minimist "^1.2.5"
 
+moment@^2.22.0:
+  version "2.27.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.27.0.tgz#8bff4e3e26a236220dfe3e36de756b6ebaa0105d"
+  integrity sha512-al0MUK7cpIcglMv3YF13qSgdAIqxHTO7brRtaz3DlSULbqfazqkc5kEjNrLDOM7fsjshoFIihnU8snrP7zUvhQ==
+
 mongodb@3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.6.0.tgz#babd7172ec717e2ed3f85e079b3f1aa29dce4724"
@@ -6598,6 +6654,13 @@ react-native-chart-kit@^5.6.0:
     paths-js "^0.4.10"
     point-in-polygon "^1.0.1"
 
+react-native-datepicker@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/react-native-datepicker/-/react-native-datepicker-1.7.2.tgz#58d0822591a0ac9b32aba082650222a0ee29669d"
+  integrity sha1-WNCCJZGgrJsyq6CCZQIioO4pZp0=
+  dependencies:
+    moment "^2.22.0"
+
 react-native-drawer@2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/react-native-drawer/-/react-native-drawer-2.5.1.tgz#08b9314184f48c724f1b467f8859797369798654"
@@ -6656,10 +6719,24 @@ react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.2.1:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
 
-react-native-maps@^0.27.1:
+"react-native-maps@https://github.com/xDemon200/react-native-maps":
   version "0.27.1"
-  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.27.1.tgz#2f10cd417bb2fd938c9e015b1c9b6d9b1a44b97f"
-  integrity sha512-HygBkZBecTnIVRYrSiLRAvu4OmXOYso/A7c6Cy73HkOh9CgGV8Ap5eBea24tvmFGptjj5Hg8AJ94/YbmWK1Okw==
+  resolved "https://github.com/xDemon200/react-native-maps#89b7ee99b00da72c1ea3eeae7f987dc2eb13be85"
+  dependencies:
+    "@types/geojson" "^7946.0.7"
+
+react-native-propel-kit@^0.8.9:
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/react-native-propel-kit/-/react-native-propel-kit-0.8.9.tgz#51666f1efac203ca2e424c3d18e373295f09d0a9"
+  integrity sha512-ezhQ+N+Kaguz3fjNCzAOEchknnuR+lIeaNqofJlAQrS285wLfbNDmWxkcgWTr5Wn1VnOR26XFlO2h9BwRVTnlg==
+  dependencies:
+    "@mgcrea/react-native-action-sheet-provider" "0.8.9"
+    "@mgcrea/react-native-backdrop-provider" "0.8.9"
+    "@mgcrea/react-native-button" "0.8.9"
+    "@mgcrea/react-native-date-picker" "0.8.9"
+    "@mgcrea/react-native-modal-dialog" "0.8.9"
+    "@mgcrea/react-native-picker" "0.8.9"
+    "@mgcrea/react-native-select" "0.8.9"
 
 react-native-pure-chart@^0.0.24:
   version "0.0.24"
@@ -6740,6 +6817,13 @@ react-native-vector-icons@^7.0.0:
     lodash "^4.17.15"
     prop-types "^15.7.2"
     yargs "^15.0.2"
+
+react-native-yearpicker@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-yearpicker/-/react-native-yearpicker-1.7.3.tgz#8d1285a12cd9e71ae6092de005b2f19227ac5eb6"
+  integrity sha512-aM7/lNep3m5qQUaOnIyDrjXds3DtYiSnktm/7tbwb3ABXXoJ+dmMX8mH9gB62zScpun2hVxJ3KdqreOgP6ReGg==
+  dependencies:
+    moment "^2.22.0"
 
 react-native@0.62.2:
   version "0.62.2"

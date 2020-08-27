@@ -51,3 +51,23 @@ export const ConfiguracaoConteiner = styled.View`
     flex-direction: row;
     justify-content: space-between;
 `;
+
+export const YearButton = styled.TouchableOpacity`
+    border-width: 1px;
+    width: 50px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    border-color: #000;
+`;
+
+export const TextYear = styled.Text`
+    font-weight: bold;
+    font-size: 15px;
+`;
+
+export const ConteinerSelectYear = styled.View`
+    flex-direction: row;
+    margin-top: 5px;
+    margin-bottom: 5px;
+`;
