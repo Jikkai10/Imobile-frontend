@@ -10,7 +10,7 @@ export default function grafico({labels, data, legenda, sufixo = ''}) {
   const [ano, setAno] = useState();
   const [color, setColor] = useState();
   const [valor, setValor] = useState();
-
+  
   return (
     <>
       <LineChart

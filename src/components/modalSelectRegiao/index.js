@@ -1,32 +1,23 @@
 import React from 'react';
 import {Modal, FlatList} from 'react-native';
-import {Container, TextButtonYear, ButtonYear, TextConteiner, DescriptionYear} from './style';
+import {Container, TextButton, ButtonRegion, TextConteiner, Description} from './style';
 
-export default function selectYear({
+export default function selectRegion({
   setModalVisible,
-  setData,
-  minYear,
-  maxYear,
+  setRegion,
+  lista,
   modalVisible,
 }) {
-
-  const anos = [];
-  for (var i = minYear; i <= maxYear; i++) {
-    anos.push({
-      year: i.toString(),
-      id: i.toString(),
-    });
-  }
-
+  
   function RenderItem(props) {
     return (
-      <ButtonYear
+      <ButtonRegion
         onPress={() => {
-          setData(parseInt(props.data.year));
+          setRegion({value: props.data.value, name: props.data.nome});
           setModalVisible(false);
         }}>
-        <TextButtonYear>{props.data.year}</TextButtonYear>
-      </ButtonYear>
+        <TextButton>{props.data.nome}</TextButton>
+      </ButtonRegion>
     );
   }
   return (
@@ -39,10 +30,10 @@ export default function selectYear({
         //Alert.alert('Modal has been closed.');
       }}>
       <Container>
-        <TextConteiner><DescriptionYear>Selecione um ano:</DescriptionYear></TextConteiner>
+        <TextConteiner><Description>Selecione uma região:</Description></TextConteiner>
         <FlatList
           //contentContainerStyle={styles.list}
-          data={anos}
+          data={lista}
           renderItem={({item}) => <RenderItem data={item} />}
           enableEmptySections={true}
           showsVerticalScrollIndicator={false}

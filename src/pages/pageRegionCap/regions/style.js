@@ -5,41 +5,23 @@ export const Container = styled.ScrollView`
     background: #fff;
 `;
 
-export const ModalContainer = styled.View`
-    margin: 20px;
-    background: #fff;
-    border-radius: 20px;
-    padding: 35px;
+export const ButtonRegion = styled.TouchableOpacity`
+    border-width: 1px;
+    padding: 3px 6px 3px 6px;
     align-items: center;
-
-    elevation: 5;
-`;
-
-export const ExitButton = styled.TouchableHighlight`
-    background: #fff;
+    justify-content: center;
     border-radius: 20px;
-    padding: 10px;
-    elevation: 2;
-    background: #000;
+    border-color: #000;
 `;
 
-export const TextExitButton = styled.Text`
-    color: white;
-    font-weight: bold;
-    text-align: center;
-`;
-
-export const Description = styled.Text`
-    font-size: 20px;
+export const DescriptionButtonRegion = styled.Text`
+    font-size: 16px;
     color: #000;
 `;
 
-export const GraficoConteiner = styled.View`
-    margin-top: 10px;
-    margin-left: 10px;
-`;
-
-export const ConfiguracaoConteiner = styled.View`
+export const ConteinerSelect = styled.View`
+    padding: 10px 0px 0px 10px;
+    align-items: center;
     flex-direction: row;
-    justify-content: space-between;
+    margin-bottom: 5px;
 `;

@@ -19,8 +19,8 @@ export const ModalContainer = styled.View`
     border-radius: 20px;
     padding: 20px;
     align-items: flex-start;
-    box-shadow: 5px 5px #000;
-    elevation: 5;
+    box-shadow: 10px 10px #000;
+    
 `;
 
 export const ExitButton = styled.TouchableHighlight`
@@ -70,4 +70,9 @@ export const ConteinerSelectYear = styled.View`
     flex-direction: row;
     margin-top: 5px;
     margin-bottom: 5px;
+`;
+
+export const Icon = styled.Image`
+    height: 25px;
+    width: 25px;
 `;

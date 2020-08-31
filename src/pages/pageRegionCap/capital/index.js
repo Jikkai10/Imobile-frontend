@@ -10,17 +10,19 @@ import {
   Description,
   GraficoConteiner,
   ConfiguracaoConteiner,
-} from './style';
+} from '../style';
 import api from '../../../services/api';
+import Loading from '../../../components/loading';
+import ModalConfGrafico from '../../../components/modalConfGrafico';
 
 export default function capital({route, isSale, firstYear, lastYear}) {
-  function ordenarPorAno(a, b) {
-    return a.ano - b.ano;
-  }
   const [apiGet, setApiGet] = useState();
   const [recebido, setRecebido] = useState(false);
-  const [valorPorcentagem,setValorPorcentagem] = useState([]);
+
   const [venda, setVenda] = useState();
+
+  const [checked, setChecked] = useState(false);
+
   async function getApiVendas() {
     let apiCap = await api.get(`/vendasCap/ano/${firstYear}/${lastYear}`);
     setApiGet(apiCap);
@@ -30,77 +32,68 @@ export default function capital({route, isSale, firstYear, lastYear}) {
     let apiCap = await api.get(`/aluguelCap/ano/${firstYear}/${lastYear}`);
     setApiGet(apiCap);
   }
-  useEffect(()=>{
+
+  useEffect(() => {
     setRecebido(false);
-  },[firstYear]);
-  useEffect(()=>{
+  }, [firstYear]);
+
+  useEffect(() => {
     setRecebido(false);
-  },[lastYear]);
-  useEffect(()=>{
+  }, [lastYear]);
+
+  useEffect(() => {
     setRecebido(false);
-  },[isSale]);
-  useEffect(()=>{
-    if(!recebido){
-      if(isSale === 0){
+  }, [isSale]);
+
+  useEffect(() => {
+    if (!recebido) {
+      if (isSale === 0) {
         getApiVendas();
         setVenda(true);
-      }else{
+      } else {
         getApiAluguel();
         setVenda(false);
       }
     }
-  },[recebido]);
+  }, [recebido]);
+
   useEffect(() => {
     if (apiGet !== undefined) {
       setRecebido(true);
-      
-      if(isSale === 0){
-        setValorPorcentagem(valorParaPorcentagem(apiGet));
-      }
     }
   }, [apiGet]);
 
-  function valorParaPorcentagem(api){
-    let valorInicial = api.data[0].vendTot;
-    let valoresPorcentagem = api.data.map((item,index)=> item.vendTot*100/valorInicial - 100);
-    return valoresPorcentagem;
-  }
-
+  const colors = [
+    '#00f',
+    '#f00',
+    '#ff8200',
+    '#000',
+    '#0f0',
+    '#0ff',
+    '#ff0',
+    '#f0f',
+    '#ff7',
+    '#909',
+    '#555',
+  ];
   const [modalVisible, setModalVisible] = useState(false);
+  const [listaNumVend, setListaNumVend] = useState([[true, false, false]]);
 
+  const descriptionNumVend = ['Número de Vendas'];
+  const descriptionNumVendExtra = [['Total', 'Apartamentos', 'Casas']];
+  
   return !recebido ? (
-    <>
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text style={{fontSize: 20, fontWeight: 'bold'}}>Carregando</Text>
-        <Image
-          style={{height: 200, width: 200}}
-          source={{
-            uri:
-              'https://cdn141.picsart.com/318740554462211.png?type=webp&to=min&r=1024',
-          }}
-          alt="Logo"
-        />
-      </View>
-    </>
+    <Loading />
   ) : venda ? (
     <Container>
-      <Modal
-        animationType='slide'
-        transparent={true}
+      <ModalConfGrafico
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-          //Alert.alert('Modal has been closed.');
-        }}>
-        <ModalContainer>
-          <ExitButton
-            onPress={() => {
-              setModalVisible(!modalVisible);
-            }}>
-            <TextExitButton>OK</TextExitButton>
-          </ExitButton>
-        </ModalContainer>
-      </Modal>
+        setVisible={setModalVisible}
+        listaRecebida={listaNumVend}
+        setLista={setListaNumVend}
+        description={descriptionNumVend}
+        descriptionExtra={descriptionNumVendExtra}
+      />
       <GraficoConteiner>
         <ConfiguracaoConteiner>
           <Description>Variação da média de vendas:</Description>
@@ -108,23 +101,31 @@ export default function capital({route, isSale, firstYear, lastYear}) {
             name="cog"
             size={20}
             color="#000"
-            background='#fff'
+            background="#fff"
             backgroundColor="#fff"
             //borderRadius={100}
             onPress={() => setModalVisible(true)}
           />
         </ConfiguracaoConteiner>
         <Grafico
-          data={[
-            {
-              data: valorPorcentagem.map(
-                (item, index) => item,
-              ),
-              color: () => '#00f',
-            },
-          ]}
+          data={
+            
+              apiGet.data[0].vendTot.map((item, index) => {
+                let data = {
+                  data: apiGet.data.map(
+                    (valor, vIndex) =>
+                      (valor.vendTot[index] * 100) / apiGet.data[0].vendTot[index] - 100,
+                  ),
+                  color: () => colors[index],
+                };
+                
+                return data;
+              }).filter((value,index)=>{return listaNumVend[0][index]})
+            
+          }
           labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo='%'
+          sufixo="%"
+          legenda={descriptionNumVendExtra[0].filter((value,index) => listaNumVend[0][index])}
         />
       </GraficoConteiner>
       <GraficoConteiner>
@@ -134,42 +135,25 @@ export default function capital({route, isSale, firstYear, lastYear}) {
             name="cog"
             size={20}
             color="#000"
-            background='#fff'
+            background="#fff"
             backgroundColor="#fff"
             //borderRadius={100}
             onPress={() => setModalVisible(true)}
           />
         </ConfiguracaoConteiner>
         <Grafico
-          data={[
-            {
+          data={apiGet.data[0].valorVendas.map((item, index) => {
+            let data = {
               data: apiGet.data.map(
-                (item, index) => item.valorVendas.vendas_100,
+                (valor, vIndex) => valor.valorVendas[index],
               ),
-              color: () => '#00f',
-            },
-            {
-              data: apiGet.data.map(
-                (item, index) => item.valorVendas.vendas_200,
-              ),
-              color: () => '#f00',
-            },
-            {
-              data: apiGet.data.map(
-                (item, index) => item.valorVendas.vendas_300,
-              ),
-              color: () => '#ff8200',
-            },
-            {
-              data: apiGet.data.map(
-                (item, index) => item.valorVendas.vendas_400,
-              ),
-              color: () => '#000',
-            },
-          ]}
+              color: () => colors[index],
+            };
+            return data;
+          })}
           labels={apiGet.data.map((item, index) => item.ano)}
           legenda={['0-100', '101-200', '201-300', '301-400']}
-          sufixo='%'
+          sufixo="%"
         />
       </GraficoConteiner>
       <GraficoConteiner>
@@ -179,7 +163,7 @@ export default function capital({route, isSale, firstYear, lastYear}) {
             name="cog"
             size={20}
             color="#000"
-            background='#fff'
+            background="#fff"
             backgroundColor="#fff"
             //borderRadius={100}
             onPress={() => setModalVisible(true)}
@@ -188,32 +172,28 @@ export default function capital({route, isSale, firstYear, lastYear}) {
         <Grafico
           data={[
             {
-              data: apiGet.data.map((item, index) => item.vendaTipoImovel.luxo),
+              data: apiGet.data.map((item, index) => item.vendaTipoImovel[0]),
               color: () => '#00f',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.vendaTipoImovel.medio,
-              ),
+              data: apiGet.data.map((item, index) => item.vendaTipoImovel[1]),
               color: () => '#f00',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.vendaTipoImovel.standard,
-              ),
+              data: apiGet.data.map((item, index) => item.vendaTipoImovel[2]),
               color: () => '#000',
             },
           ]}
           labels={apiGet.data.map((item, index) => item.ano)}
           legenda={['luxo', 'medio', 'standard']}
-          sufixo='%'
+          sufixo="%"
         />
       </GraficoConteiner>
     </Container>
   ) : (
     <Container>
       <Modal
-        animationType='slide'
+        animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
@@ -236,7 +216,7 @@ export default function capital({route, isSale, firstYear, lastYear}) {
             name="cog"
             size={20}
             color="#000"
-            background='#fff'
+            background="#fff"
             backgroundColor="#fff"
             //borderRadius={100}
             onPress={() => setModalVisible(true)}
@@ -246,13 +226,16 @@ export default function capital({route, isSale, firstYear, lastYear}) {
           data={[
             {
               data: apiGet.data.map(
-                (item, index) => item.numeroAluguel[0]*100/apiGet.data[0].numeroAluguel[0] -100,
+                (item, index) =>
+                  (item.numeroAluguel[0] * 100) /
+                    apiGet.data[0].numeroAluguel[0] -
+                  100,
               ),
               color: () => '#00f',
             },
           ]}
           labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo='%'
+          sufixo="%"
         />
       </GraficoConteiner>
       <GraficoConteiner>
@@ -262,7 +245,7 @@ export default function capital({route, isSale, firstYear, lastYear}) {
             name="cog"
             size={20}
             color="#000"
-            background='#fff'
+            background="#fff"
             backgroundColor="#fff"
             //borderRadius={100}
             onPress={() => setModalVisible(true)}
@@ -271,43 +254,35 @@ export default function capital({route, isSale, firstYear, lastYear}) {
         <Grafico
           data={[
             {
-              data: apiGet.data.map(
-                (item, index) => item.valorAluguel[0],
-              ),
+              data: apiGet.data.map((item, index) => item.valorAluguel[0]),
               color: () => '#00f',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.valorAluguel[1],
-              ),
+              data: apiGet.data.map((item, index) => item.valorAluguel[1]),
               color: () => '#f00',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.valorAluguel[2],
-              ),
+              data: apiGet.data.map((item, index) => item.valorAluguel[2]),
               color: () => '#ff8200',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.valorAluguel[3],
-              ),
+              data: apiGet.data.map((item, index) => item.valorAluguel[3]),
               color: () => '#000',
             },
           ]}
           labels={apiGet.data.map((item, index) => item.ano)}
           legenda={['0-200', '201-400', '401-600', '601-800']}
-          sufixo='%'
+          sufixo="%"
         />
       </GraficoConteiner>
       <GraficoConteiner>
         <ConfiguracaoConteiner>
-          <Description>Ocorrência por tipo do imóvel:</Description>
+          <Description>Ocorrência por número de quartos:</Description>
           <Icon.Button
             name="cog"
             size={20}
             color="#000"
-            background='#fff'
+            background="#fff"
             backgroundColor="#fff"
             //borderRadius={100}
             onPress={() => setModalVisible(true)}
@@ -316,33 +291,25 @@ export default function capital({route, isSale, firstYear, lastYear}) {
         <Grafico
           data={[
             {
-              data: apiGet.data.map(
-                (item, index) => item.aluguelDorm[0],
-              ),
+              data: apiGet.data.map((item, index) => item.aluguelDorm[0]),
               color: () => '#00f',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.aluguelDorm[1],
-              ),
+              data: apiGet.data.map((item, index) => item.aluguelDorm[1]),
               color: () => '#f00',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.aluguelDorm[2],
-              ),
+              data: apiGet.data.map((item, index) => item.aluguelDorm[2]),
               color: () => '#ff8200',
             },
             {
-              data: apiGet.data.map(
-                (item, index) => item.aluguelDorm[3],
-              ),
+              data: apiGet.data.map((item, index) => item.aluguelDorm[3]),
               color: () => '#000',
             },
           ]}
           labels={apiGet.data.map((item, index) => item.ano)}
           legenda={['kit', '1 dorm', '2 dorm', '3 dorm']}
-          sufixo='%'
+          sufixo="%"
         />
       </GraficoConteiner>
     </Container>
