@@ -18,7 +18,9 @@ export default function grafico({labels, data, legenda, sufixo = ''}) {
           labels: labels,
           datasets: data,
           legend: legenda,
+          
         }}
+        
         /*formatYLabel={(value) => {
           if (yPrefixo === '') {
             return value;
@@ -31,18 +33,19 @@ export default function grafico({labels, data, legenda, sufixo = ''}) {
         height={300}
         verticalLabelRotation={70}
         yAxisSuffix={sufixo}
+        
         //yAxisLabel={yPrefixo}
         //yLabelsOffset={5}
         chartConfig={{
-          backgroundColor: '#fff',
-          backgroundGradientFrom: '#fff',
-          backgroundGradientTo: '#fff',
+          backgroundColor: '#13131a',
+          backgroundGradientFrom: '#13131a',
+          backgroundGradientTo: '#13131a',
           decimalPlaces: 0, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgb(0,0,0)`,
-          labelColor: () => `#000`,
+          color: (opacity = 1) => `rgb(255,255,255)`,
+          labelColor: () => `#fff`,
           propsForLabels: {fontWeight: 'bold'},
           style: {borderRadius: 16},
-          propsForDots: {r: '6', strokeWidth: '2', stroke: '#fff'},
+          propsForDots: {r: '6', strokeWidth: '2', stroke: '#000'},
         }}
         onDataPointClick={({value, index, getColor}) => {
           setModalVisible(true);

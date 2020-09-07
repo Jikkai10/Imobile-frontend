@@ -1,15 +1,15 @@
 import React from 'react';
 import {Modal, FlatList} from 'react-native';
 import {Container, TextButtonYear, ButtonYear, TextConteiner, DescriptionYear} from './style';
-
+import {Modalize} from 'react-native-modalize';
 export default function selectYear({
-  setModalVisible,
   setData,
+  data,
   minYear,
   maxYear,
   modalVisible,
 }) {
-
+  let value = data;
   const anos = [];
   for (var i = minYear; i <= maxYear; i++) {
     anos.push({
@@ -22,22 +22,31 @@ export default function selectYear({
     return (
       <ButtonYear
         onPress={() => {
-          setData(parseInt(props.data.year));
-          setModalVisible(false);
+          value = props.data.year;
+          modalVisible.current?.close();
         }}>
         <TextButtonYear>{props.data.year}</TextButtonYear>
       </ButtonYear>
     );
   }
   return (
-    <Modal
-      animationType="slide"
+    <Modalize
+      /*animationType="slide"
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
         setModalVisible(false);
         //Alert.alert('Modal has been closed.');
-      }}>
+      }}*/ 
+      ref={modalVisible}
+      disableScrollIfPossible
+      onClosed={()=>setData(parseInt(value))}
+      panGestureEnabled={false}
+      withHandle={false}
+      
+      modalStyle={{backgroundColor: null}}
+      //withReactModal
+      >
       <Container>
         <TextConteiner><DescriptionYear>Selecione um ano:</DescriptionYear></TextConteiner>
         <FlatList
@@ -50,6 +59,6 @@ export default function selectYear({
         />
         
       </Container>
-    </Modal>
+    </Modalize>
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,9 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
 } from 'react-native';
-import {Container,ContainerOptions,Title} from './styles';
+import {Container, ContainerOptions, Title} from './styles';
 export default function customPicker({label, data, currentIndex, onSelected}) {
+  const buttonRef = useRef(null);
   return (
     <Container>
       <Title>{label}</Title>
@@ -19,8 +20,14 @@ export default function customPicker({label, data, currentIndex, onSelected}) {
           keyExtractor={(item, idx) => String(item)}
           renderItem={({item, index}) => {
             const selected = index === currentIndex;
+            
             return (
-              <TouchableWithoutFeedback onPress={() => onSelected(index)}>
+              <TouchableWithoutFeedback
+                ref={buttonRef}
+                onPress={() => {
+                  
+                  return onSelected(index);
+                }}>
                 <View
                   style={[
                     styles.itemStyleHorizontal,
@@ -29,7 +36,7 @@ export default function customPicker({label, data, currentIndex, onSelected}) {
                   <Text
                     style={{
                       textAlign: 'center',
-                      color: selected ? 'black' : 'grey',
+                      color: selected ? '#fff' : '#aaa',
                       fontWeight: selected ? 'bold' : 'normal',
                     }}>
                     {item + ''}
@@ -50,13 +57,13 @@ const styles = StyleSheet.create({
     height: 25,
     padding: 5,
     borderWidth: 1,
-    borderColor: 'grey',
+    borderColor: '#aaa',
     borderRadius: 25,
     textAlign: 'center',
     justifyContent: 'center',
   },
   itemSelectedStyleHorizontal: {
     borderWidth: 2,
-    borderColor: '#000',
+    borderColor: '#fff',
   },
 });

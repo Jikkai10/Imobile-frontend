@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 
 export const Container = styled.ScrollView`
     flex: 1;
-    background: #fff;
+    background: #13131a;
 `;
 
 export const ConfiguracaoHeader = styled.TouchableOpacity`
@@ -15,7 +15,7 @@ export const ConfiguracaoHeader = styled.TouchableOpacity`
 
 export const ModalContainer = styled.View`
     margin: 5px;
-    background: #fff;
+    background: #13131a;
     border-radius: 20px;
     padding: 20px;
     align-items: flex-start;
@@ -28,18 +28,19 @@ export const ExitButton = styled.TouchableHighlight`
     align-self: center;
     padding: 5px;
     elevation: 2;
-    background: #000;
+    background: #fff;
 `;
 
 export const TextExitButton = styled.Text`
-    color: white;
+    color: #000;
     font-weight: bold;
     text-align: center;
 `;
 
 export const Description = styled.Text`
     font-size: 20px;
-    color: #000;
+    font-weight: bold;
+    color: #fff;
 `;
 
 export const GraficoConteiner = styled.View`
@@ -58,12 +59,13 @@ export const YearButton = styled.TouchableOpacity`
     align-items: center;
     justify-content: center;
     border-radius: 20px;
-    border-color: #000;
+    border-color: #fff;
 `;
 
 export const TextYear = styled.Text`
     font-weight: bold;
     font-size: 15px;
+    color: #fff;
 `;
 
 export const ConteinerSelectYear = styled.View`

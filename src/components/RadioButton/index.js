@@ -1,21 +1,23 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 
 import {Circle, CheckedCircle} from './styles';
 
-function RadioButton({checked, setChecked, last}) {
+function RadioButton({checked, setChecked, last, setShowLastMensag}) {
   return (
     <Circle
-      style={{borderColor: checked ? '#000' : '#999'}}
+      style={{borderColor: checked ? '#fff' : '#aaa'}}
       onPress={() => {
-        if(!last){
+        if (!last) {
           setChecked(!checked);
-        }else{
+        } else if (checked) {
+          setShowLastMensag(true);
+        } else {
           setChecked(true);
         }
       }}>
       {checked ? (
-        <CheckedCircle style={{backgroundColor: checked ? '#000' : '#999'}} />
+        <CheckedCircle style={{backgroundColor: checked ? '#fff' : '#aaa'}} />
       ) : (
         <View />
       )}

@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
 import {} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useHeaderHeight} from '@react-navigation/stack';
 import Modal from 'react-native-modal';
+import {Modalize} from 'react-native-modalize';
 
 import {
   ModalContainer,
@@ -38,30 +39,49 @@ export default function valorizacao({navigation, route}) {
   const [minYear, setMinYear] = useState(2018);
   const [maxYear, setMaxYear] = useState(2020);
 
+  const minYearRef = useRef(null);
+  const maxYearRef = useRef(null);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <ConfiguracaoHeader
-          style={{height: height}}
-          onPress={() => setIsModalVisible(true)}>
+        <ConfiguracaoHeader style={{height: height}} onPress={onOpen}>
           <Icon name="cog" size={25} color="#fff" />
         </ConfiguracaoHeader>
       ),
     });
   }, [navigation]);
 
-  
+  const visibleRef = useRef(null);
+
+  function onOpen() {
+    visibleRef.current?.open();
+  }
+
+  function onClose() {
+    visibleRef.current?.close();
+  }
 
   return (
     <>
-      <Modal
-        style={{flex:1,margin:0,justifyContent:'flex-start'}}
+      
+      <Modalize
+        /*style={{flex:1,margin:0,justifyContent:'flex-start'}}
         useNativeDriver={true}   
+        
         visible={isModalVisible}
         onBackdropPress={() => setIsModalVisible(!isModalVisible)}
         onRequestClose={() => {
           setIsModalVisible(!isModalVisible);
           //Alert.alert('Modal has been closed.');
+        }}*/
+        ref={visibleRef}
+        withHandle={false}
+        modalStyle={{backgroundColor: null,zIndex: 10,elevation: 2}}
+        onClosed={() => {
+          setIsSale(vendaOuAluguel);
+          setFirstYear(minYear);
+          setLastYear(maxYear);
         }}>
         <ModalContainer>
           <CustomPicker
@@ -74,61 +94,67 @@ export default function valorizacao({navigation, route}) {
             <TextYear>Mostrar dados de </TextYear>
             <YearButton
               onPress={() => {
-                setModalMinYearVisible(!modalMinYearVisible);
+                minYearRef.current?.open();
+                //setModalMinYearVisible(!modalMinYearVisible);
               }}>
               <TextYear>{minYear}</TextYear>
             </YearButton>
-            <ModalYear
-              modalVisible={modalMinYearVisible}
-              setModalVisible={setModalMinYearVisible}
-              setData={setMinYear}
-              minYear={2010}
-              maxYear={maxYear - 1}
-            />
+
             <TextYear> até </TextYear>
             <YearButton
               onPress={() => {
-                setModalMaxYearVisible(!modalMaxYearVisible);
+                maxYearRef.current?.open();
               }}>
               <TextYear>{maxYear}</TextYear>
             </YearButton>
-            <ModalYear
-              modalVisible={modalMaxYearVisible}
-              setModalVisible={setModalMaxYearVisible}
-              setData={setMaxYear}
-              minYear={minYear + 1}
-              maxYear={2020}
-            />
+           
           </ConteinerSelectYear>
           <ExitButton
             onPress={() => {
-              setIsModalVisible(false);
-              setIsSale(vendaOuAluguel);
-              setFirstYear(minYear);
-              setLastYear(maxYear);
+              visibleRef.current.close();
             }}>
             <TextExitButton>OK</TextExitButton>
           </ExitButton>
         </ModalContainer>
-      </Modal>
+      </Modalize>
+      <ModalYear
+        modalVisible={minYearRef}
+        data={minYear}
+        setData={setMinYear}
+        minYear={2010}
+        maxYear={maxYear - 1}
+      />
+      <ModalYear
+        modalVisible={maxYearRef}
+        data={maxYear}
+        setData={setMaxYear}
+        minYear={minYear + 1}
+        maxYear={2020}
+      />
       <Tab.Navigator
         initialRouteName="Capital"
         lazy
-        
         removeClippedSubviews
         tabBarOptions={{
-          activeTintColor: '#000',
+          activeTintColor: '#fff',
           showIcon: true,
-          
+
           labelStyle: {fontSize: 13},
-          indicatorStyle: {backgroundColor: '#000'},
-          tabStyle: {flex: 1,flexDirection: 'row'},
-          style: {backgroundColor: '#fff'},
+          indicatorStyle: {backgroundColor: '#fff'},
+          tabStyle: {flex: 1, flexDirection: 'row'},
+          style: {backgroundColor: '#13131a'},
         }}>
         <Tab.Screen
           name="Capital"
           key="Capital"
-          options={{tabBarIcon: ({focused}) => <IconImage style={{opacity: focused ? 1 : 0.5}} source={require('../../logo/brasil.png')}/>}}
+          options={{
+            tabBarIcon: ({focused}) => (
+              <IconImage
+                style={{opacity: focused ? 1 : 0.5, tintColor: '#fff'}}
+                source={require('../../logo/brasil.png')}
+              />
+            ),
+          }}
           children={() => (
             <Capital
               isSale={isSale}
@@ -140,8 +166,15 @@ export default function valorizacao({navigation, route}) {
 
         <Tab.Screen
           name="Regiões"
-          key='Regioes'
-          options={{tabBarIcon: ({focused}) => <IconImage style={{opacity: focused ? 1 : 0.5}} source={require('../../logo/placeholder.png')}/>}}
+          key="Regioes"
+          options={{
+            tabBarIcon: ({focused}) => (
+              <IconImage
+                style={{opacity: focused ? 1 : 0.5, tintColor: '#fff'}}
+                source={require('../../logo/placeholder.png')}
+              />
+            ),
+          }}
           children={() => (
             <Regions
               isSale={isSale}
