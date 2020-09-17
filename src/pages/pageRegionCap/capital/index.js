@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Grafico from '../../../components/grafico';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {View, Modal, Text, Image} from 'react-native';
+import {View, Modal, FlatList} from 'react-native';
 import {
   Container,
   ModalContainer,
@@ -81,10 +81,13 @@ export default function capital({route, isSale, firstYear, lastYear}) {
   const modalConf1 = useRef(null);
   const modalConf2 = useRef(null);
   const modalConf3 = useRef(null);
+  const modalConf4 = useRef(null);
+  const modalConf5 = useRef(null);
+  const modalConf6 = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [listaNumVend, setListaNumVend] = useState([[true, false, false]]);
   const descriptionNumVend = ['Número de Vendas'];
-  const descriptionNumVendExtra = [['Total', 'Apartamentos', 'Casas']];
+  const descriptionNumVendExtra = [['Total', 'Casas', 'Apartamentos']];
 
 
   const [listaPreco, setListaPreco] = useState([
@@ -165,6 +168,95 @@ export default function capital({route, isSale, firstYear, lastYear}) {
     ],
   ];
 
+  const [listaAlugNum, setListaAlugNum] = useState([
+    [
+      true,
+      false,
+      false,
+    ],
+  ]);
+  const descriptionAlugNum = ['Número de Alugueis:'];
+  const descriptionAlugNumExtra = [
+    [
+      'Total',
+      'Casas',
+      'Apartamentos',
+    ],
+  ];
+
+  const [listaAlugValor, setListaAlugValor] = useState([
+    [
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ],
+    [
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ],
+  ]);
+  const descriptionAlugValor = ['Valor de Aluguel:','Valor por m²:'];
+  const descriptionAlugValorExtra = [
+    [
+      'até 200',
+      'até 400',
+      'até 600',
+      'até 800',
+      'até 1000',
+      'até 1200',
+      'até 1400',
+      'até 1600',
+      'até 1800',
+      'até 2000',
+      '+ de 2000',
+    ],
+    [
+      'até 10',
+      'até 15',
+      'até 20',
+      'até 25',
+      'até 30',
+      'até 35',
+      '+ de 35',
+    ],
+  ];
+  
+  const [listaAlugTipo, setListaAlugTipo] = useState([
+    [true, true, false, false, false, false],
+    [true, true, false, false, false],
+  ]);
+  const descriptionAlugTipo = ['Número de dormitórios:','Número de garagens:'];
+  const descriptionAlugTipoExtra = [
+    [
+      'kitnet',
+      '1 dormitório',
+      '2 dormitórios',
+      '3 dormitórios',
+      '4 dormitórios',
+      '+ de 4 dormitórios',
+    ],
+    [
+      '0 vagas de garagem',
+      '1 vaga de garagem',
+      '2 vagas de garagem',
+      '3 vagas de garagem',
+      '+ de 3 vagas de garagem',
+    ],
+  ];
+
   function ajeitaDescription(desc, list) {
     let cont = 0;
     let description = desc.map((value, index) => {
@@ -208,7 +300,7 @@ export default function capital({route, isSale, firstYear, lastYear}) {
   return !recebido ? (
     <Loading />
   ) : venda ? (
-    <Container>
+    <Container >
       <GraficoConteiner>
         <ConfiguracaoConteiner>
           <Description>Variação da média de vendas:</Description>
@@ -224,6 +316,11 @@ export default function capital({route, isSale, firstYear, lastYear}) {
             descriptionExtra={descriptionNumVendExtra}
           />
         </ConfiguracaoConteiner>
+        <Legenda
+          colors={colors}
+          values={ajeitaDescription(descriptionNumVendExtra, listaNumVend)}
+          valuesTipo={descriptionNumVend}
+        />
         <Grafico
           data={apiGet.data[0].vendTot
             .map((item, index) => {
@@ -244,9 +341,6 @@ export default function capital({route, isSale, firstYear, lastYear}) {
             })}
           labels={apiGet.data.map((item, index) => item.ano)}
           sufixo="%"
-          legenda={descriptionNumVendExtra[0].filter(
-            (value, index) => listaNumVend[0][index],
-          )}
         />
       </GraficoConteiner>
       <GraficoConteiner>
@@ -322,28 +416,40 @@ export default function capital({route, isSale, firstYear, lastYear}) {
       <GraficoConteiner>
         <ConfiguracaoConteiner>
           <Description>Variação da média de alugueis:</Description>
-          <Icon.Button
-            name="cog"
-            size={20}
-            color="#000"
-            background="#fff"
-            backgroundColor="#fff"
-            //borderRadius={100}
-            onPress={() => setModalVisible(true)}
+          <Configuracao onPress={() => modalConf4.current?.open()}>
+            <Icon name="cog" size={20} color="#fff" />
+          </Configuracao>
+          <ModalConfGrafico
+            visible={modalConf4}
+            listaRecebida={listaAlugNum}
+            setLista={setListaAlugNum}
+            description={descriptionAlugNum}
+            descriptionExtra={descriptionAlugNumExtra}
           />
         </ConfiguracaoConteiner>
+        <Legenda
+          colors={colors}
+          values={ajeitaDescription(descriptionAlugNumExtra, listaAlugNum)}
+          valuesTipo={descriptionAlugNum}
+        />
         <Grafico
-          data={[
-            {
-              data: apiGet.data.map(
-                (item, index) =>
-                  (item.numeroAluguel[0] * 100) /
-                    apiGet.data[0].numeroAluguel[0] -
-                  100,
-              ),
-              color: () => '#00f',
-            },
-          ]}
+          data={apiGet.data[0].numeroAluguel
+            .map((item, index) => {
+              let data = {
+                data: apiGet.data.map(
+                  (valor, vIndex) =>
+                    (valor.numeroAluguel[index] * 100) /
+                      apiGet.data[0].numeroAluguel[index] -
+                    100,
+                ),
+                color: () => colors[index],
+              };
+
+              return data;
+            })
+            .filter((value, index) => {
+              return listaAlugNum[0][index];
+            })}
           labels={apiGet.data.map((item, index) => item.ano)}
           sufixo="%"
         />
@@ -351,74 +457,50 @@ export default function capital({route, isSale, firstYear, lastYear}) {
       <GraficoConteiner>
         <ConfiguracaoConteiner>
           <Description>Ocorrência por grupo de preço:</Description>
-          <Icon.Button
-            name="cog"
-            size={20}
-            color="#000"
-            background="#fff"
-            backgroundColor="#fff"
-            //borderRadius={100}
-            onPress={() => setModalVisible(true)}
+          <Configuracao onPress={() => modalConf5.current?.open()}>
+            <Icon name="cog" size={20} color="#fff" />
+          </Configuracao>
+          <ModalConfGrafico
+            visible={modalConf5}
+            listaRecebida={listaAlugValor}
+            setLista={setListaAlugValor}
+            description={descriptionAlugValor}
+            descriptionExtra={descriptionAlugValorExtra}
           />
         </ConfiguracaoConteiner>
+        <Legenda
+          colors={colors}
+          values={ajeitaDescription(descriptionAlugValorExtra, listaAlugValor)}
+          valuesTipo={descriptionAlugValor}
+        />
         <Grafico
-          data={[
-            {
-              data: apiGet.data.map((item, index) => item.valorAluguel[0]),
-              color: () => '#00f',
-            },
-            {
-              data: apiGet.data.map((item, index) => item.valorAluguel[1]),
-              color: () => '#f00',
-            },
-            {
-              data: apiGet.data.map((item, index) => item.valorAluguel[2]),
-              color: () => '#ff8200',
-            },
-            {
-              data: apiGet.data.map((item, index) => item.valorAluguel[3]),
-              color: () => '#000',
-            },
-          ]}
+          data={grupoDeValores(['valorAluguel','valorAluguelM2'],listaAlugValor)}
           labels={apiGet.data.map((item, index) => item.ano)}
-          legenda={['0-200', '201-400', '401-600', '601-800']}
           sufixo="%"
         />
       </GraficoConteiner>
       <GraficoConteiner>
         <ConfiguracaoConteiner>
           <Description>Ocorrência por número de quartos:</Description>
-          <Icon.Button
-            name="cog"
-            size={20}
-            color="#000"
-            background="#fff"
-            backgroundColor="#fff"
-            //borderRadius={100}
-            onPress={() => setModalVisible(true)}
+          <Configuracao onPress={() => modalConf6.current?.open()}>
+            <Icon name="cog" size={20} color="#fff" />
+          </Configuracao>
+          <ModalConfGrafico
+            visible={modalConf6}
+            listaRecebida={listaAlugTipo}
+            setLista={setListaAlugTipo}
+            description={descriptionAlugTipo}
+            descriptionExtra={descriptionAlugTipoExtra}
           />
         </ConfiguracaoConteiner>
+        <Legenda
+          colors={colors}
+          values={ajeitaDescription(descriptionAlugTipoExtra, listaAlugTipo)}
+          valuesTipo={descriptionAlugTipo}
+        />
         <Grafico
-          data={[
-            {
-              data: apiGet.data.map((item, index) => item.aluguelDorm[0]),
-              color: () => '#00f',
-            },
-            {
-              data: apiGet.data.map((item, index) => item.aluguelDorm[1]),
-              color: () => '#f00',
-            },
-            {
-              data: apiGet.data.map((item, index) => item.aluguelDorm[2]),
-              color: () => '#ff8200',
-            },
-            {
-              data: apiGet.data.map((item, index) => item.aluguelDorm[3]),
-              color: () => '#000',
-            },
-          ]}
+          data={grupoDeValores(['aluguelDorm','aluguelGar'],listaAlugTipo)}
           labels={apiGet.data.map((item, index) => item.ano)}
-          legenda={['kit', '1 dorm', '2 dorm', '3 dorm']}
           sufixo="%"
         />
       </GraficoConteiner>

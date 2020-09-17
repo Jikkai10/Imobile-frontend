@@ -5,18 +5,26 @@ export const Container = styled.ScrollView`
     background: #fff;
 `;
 
+export const Configuracao = styled.TouchableOpacity`
+  margin-right: 5px;
+  border-radius: 5px;
+  align-items: center;
+  width: 30px;
+  justify-content: center;
+`;
+
 export const ButtonRegion = styled.TouchableOpacity`
     border-width: 1px;
     padding: 3px 6px 3px 6px;
     align-items: center;
     justify-content: center;
     border-radius: 20px;
-    border-color: #000;
+    border-color: #fff;
 `;
 
 export const DescriptionButtonRegion = styled.Text`
     font-size: 16px;
-    color: #000;
+    color: #fff;
 `;
 
 export const ConteinerSelect = styled.View`

@@ -5,7 +5,7 @@ export const Container = styled.SafeAreaView`
     margin: 5px;
     background: #13131a;
     border-radius: 20px;
-    padding-bottom: 10px;
+    padding: 0px 3px 10px 3px;
     width: 50%;
     max-height: 200px;
     align-self: center;
@@ -21,7 +21,6 @@ export const ButtonYear = styled.TouchableOpacity`
     align-items: center;
     width: 100%;
     border-top-width: 1px;
-    border-radius: 20px;
     border-color: #171717;
 `;
 

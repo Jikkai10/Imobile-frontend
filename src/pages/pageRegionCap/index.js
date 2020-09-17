@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
-import {} from 'react-native';
+import { YellowBox } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useHeaderHeight} from '@react-navigation/stack';
@@ -51,7 +51,8 @@ export default function valorizacao({navigation, route}) {
       ),
     });
   }, [navigation]);
-
+  
+  console.disableYellowBox = true;
   const visibleRef = useRef(null);
 
   function onOpen() {

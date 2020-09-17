@@ -1,6 +1,7 @@
 import Avaliador from './pages/page_avaliadores';
 import Valorizacao from './pages/pageRegionCap';
 import MainMapa from './pages/page_mapa';
+import Main from './pages/pageMain';
 
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
@@ -12,20 +13,29 @@ const Stack = createStackNavigator();
 function Routes() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="mapa">
+      <Stack.Navigator initialRouteName="main">
         <Stack.Screen
           name="mapa"
           component={MainMapa}
           options={{
             title: 'Imobile',
             headerStyle: {
-              backgroundColor: '#111111',
+              backgroundColor: '#000',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
               fontWeight: 'bold',
             },
             headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen
+          name="main"
+          component={Main}
+          options={{
+            
+            headerShown: false,
+            
           }}
         />
         <Stack.Screen
@@ -49,7 +59,7 @@ function Routes() {
           options={({navigation, route}) => ({
             title: route.params.title,
             headerStyle: {
-              backgroundColor: '#111',
+              backgroundColor: '#000',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {

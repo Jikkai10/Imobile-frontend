@@ -41,7 +41,7 @@
     "react-native-modalize": "^2.0.6",
     "react-native-propel-kit": "^0.8.9",
     "react-native-pure-chart": "^0.0.24",
-    "react-native-reanimated": "^1.9.0",
+    "react-native-reanimated": "^2.0.0-alpha.6",
     "react-native-safe-area-context": "^3.0.3",
     "react-native-screens": "^2.8.0",
     "react-native-svg": "^12.1.0",
