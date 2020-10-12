@@ -6,7 +6,7 @@ export const Container = styled.ScrollView`
 `;
 
 export const Configuracao = styled.TouchableOpacity`
-  margin-right: 5px;
+  margin-right: 10px;
   border-radius: 5px;
   align-items: center;
   width: 30px;

@@ -35,7 +35,7 @@ export default function modal({
                 Ano: {ano}
               </TextModal>
               <TextModal>
-                Valor: {valor.toFixed(2)}{sufixo}
+                Valor: {valor===-100?("sem informação"):(valor.toFixed(2))}{valor===-100?null:(sufixo)}
               </TextModal>
             </ConteinerModal>
         </Container>

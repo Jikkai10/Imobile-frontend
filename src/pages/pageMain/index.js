@@ -34,7 +34,7 @@ function Main({navigation}) {
     },
     {
       region: 'Grande São Paulo',
-      key: 'grandeSP',
+      key: 'Grande SP',
     },
     {
       region: 'Litoral',
@@ -49,18 +49,23 @@ function Main({navigation}) {
     return (
       <Button
         onPress={() => {
-          navigation.navigate('valorizacao', {title: props.data.region});
+          navigation.navigate('valorizacao', {title: props.data.region, key:props.data.key});
         }}>
         <Text>{props.data.region}</Text>
       </Button>
     );
   }
   const heightList = useSharedValue(0);
+  const positionList = useSharedValue(30);
   const containerLogoPosition = useSharedValue(-30);
   const logoOpacity = useSharedValue(0);
   const textPosition = useSharedValue(30);
   const avaliadorPositionX = useSharedValue(-Dimensions.get('window').width * 0.5);
   useEffect(()=>{
+    positionList.value = withTiming(0,{
+      duration: 2100,
+      easing: Easing.bounce,
+    });
     containerLogoPosition.value = withTiming(0,{
       duration: 2000,
       easing: Easing.bounce,
@@ -101,7 +106,13 @@ function Main({navigation}) {
   const ListStyle = useAnimatedStyle(()=>{
     return {
       height: heightList.value,
-      
+      transform: [{translateY: positionList.value}],
+      opacity: interpolate(
+        positionList.value,
+        [30, 0],
+        [0, 1],
+        Extrapolate.CLAMP,
+      ),
     };
   });
   const logoStyle = useAnimatedStyle(() => {
@@ -135,6 +146,7 @@ function Main({navigation}) {
             data={regions}
             renderItem={({item}) => <ListRegion data={item} />}
             enableEmptySections={true}
+            keyExtractor={item => item.key.toString()}
             showsVerticalScrollIndicator={false}
           />
         </Animated.View>

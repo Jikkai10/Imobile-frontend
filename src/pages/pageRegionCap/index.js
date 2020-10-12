@@ -39,8 +39,8 @@ export default function valorizacao({navigation, route}) {
   const [minYear, setMinYear] = useState(2018);
   const [maxYear, setMaxYear] = useState(2020);
 
-  const minYearRef = useRef(null);
-  const maxYearRef = useRef(null);
+  const [minYearVisible,setMinYearVisible] = useState(false);
+  const [maxYearVisible,setMaxYearVisible] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -52,7 +52,7 @@ export default function valorizacao({navigation, route}) {
     });
   }, [navigation]);
   
-  console.disableYellowBox = true;
+  //console.disableYellowBox = true;
   const visibleRef = useRef(null);
 
   function onOpen() {
@@ -95,7 +95,7 @@ export default function valorizacao({navigation, route}) {
             <TextYear>Mostrar dados de </TextYear>
             <YearButton
               onPress={() => {
-                minYearRef.current?.open();
+                setMinYearVisible(true);
                 //setModalMinYearVisible(!modalMinYearVisible);
               }}>
               <TextYear>{minYear}</TextYear>
@@ -104,7 +104,7 @@ export default function valorizacao({navigation, route}) {
             <TextYear> até </TextYear>
             <YearButton
               onPress={() => {
-                maxYearRef.current?.open();
+                setMaxYearVisible(true)
               }}>
               <TextYear>{maxYear}</TextYear>
             </YearButton>
@@ -119,14 +119,16 @@ export default function valorizacao({navigation, route}) {
         </ModalContainer>
       </Modalize>
       <ModalYear
-        modalVisible={minYearRef}
+        modalVisible={minYearVisible}
+        setModalVisible={setMinYearVisible}
         data={minYear}
         setData={setMinYear}
         minYear={2010}
         maxYear={maxYear - 1}
       />
       <ModalYear
-        modalVisible={maxYearRef}
+        modalVisible={maxYearVisible}
+        setModalVisible={setMaxYearVisible}
         data={maxYear}
         setData={setMaxYear}
         minYear={minYear + 1}
@@ -146,7 +148,7 @@ export default function valorizacao({navigation, route}) {
           style: {backgroundColor: '#13131a'},
         }}>
         <Tab.Screen
-          name="Capital"
+          name={route.params.title}
           key="Capital"
           options={{
             tabBarIcon: ({focused}) => (
@@ -159,6 +161,7 @@ export default function valorizacao({navigation, route}) {
           children={() => (
             <Capital
               isSale={isSale}
+              region={route.params.key}
               firstYear={firstYear}
               lastYear={lastYear}
             />
@@ -179,6 +182,7 @@ export default function valorizacao({navigation, route}) {
           children={() => (
             <Regions
               isSale={isSale}
+              region={route.params.key}
               firstYear={firstYear}
               lastYear={lastYear}
             />

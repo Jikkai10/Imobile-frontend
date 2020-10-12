@@ -1,5 +1,5 @@
-import React, {useState, useEffect,useRef} from 'react';
-import {View, Text} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {View, Text, FlatList,Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   ConteinerSelect,
@@ -7,25 +7,32 @@ import {
   DescriptionButtonRegion,
   Configuracao,
 } from './style';
-import {Container,GraficoConteiner,Description,ConfiguracaoConteiner} from '../style';
+import {
+  Container,
+  GraficoConteiner,
+  Description,
+  ConfiguracaoConteiner,
+} from '../style';
 import ModalConfGrafico from '../../../components/modalConfGrafico';
 import Legenda from '../../../components/legenda';
 import SelectRegion from '../../../components/modalSelectRegiao';
 import Grafico from '../../../components/grafico';
 import api from '../../../services/api';
 import Loading from '../../../components/loading';
+import selectRegion from '../../../components/modalSelectRegiao';
 
 function ordenarPorMes(a, b) {
   return a.mes - b.mes;
 }
 
-export default function valRegiao({isSale, firstYear, lastYear}) {
+export default function valRegiao({isSale, firstYear, lastYear, region}) {
   //return (function () {
   const [apiGet, setApiGet] = useState();
+  const [venda, setVenda] = useState();
   const [recebido, setRecebido] = useState(false);
 
-  const selectRegionVisible = useRef(null);
-  const lista = [
+  const [selectRegionVisible, setSelectRegionVisible] = useState(false);
+  const [listaR, setListaR] = useState([
     {
       nome: 'Região A',
       value: 'a',
@@ -51,25 +58,67 @@ export default function valRegiao({isSale, firstYear, lastYear}) {
       value: 'e',
       id: 'e',
     },
-  ];
+  ]);
   const [regionSelected, setRegionSelected] = useState({
     value: 'a',
     name: 'Região A',
   });
 
   async function getApiVenda() {
-    let apiCap = await api.get(`/vendasRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`);
+    let apiCap = await api.get(
+      `/vendasRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+    );
     setApiGet(apiCap);
   }
 
-  async function getApiAluguel() {
-    let apiCap = await api.get(`/aluguelRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`);
+  async function getApiVendaCity() {
+    let apiCap = await api.get(
+      `/vendasCity/${region}/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+    );
     setApiGet(apiCap);
+    
+  }
+
+  async function getApiAluguel() {
+    let apiCap = await api.get(
+      `/aluguelRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+    );
+    setApiGet(apiCap);
+  }
+
+  async function getApiAluguelCity() {
+    let apiCap = await api.get(
+      `/aluguelCity/${region}/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+    );
+    setApiGet(apiCap);
+  }
+  const isFirstRun = useRef(true);
+  const [recebidoNomes, setRecebidoNomes] = useState(false);
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+    } else if (region !== 'capital') {
+      setRegionSelected({name: listaR[0].nome, value: listaR[0].value});
+      setRecebidoNomes(true);
+    }
+  }, [listaR]);
+
+  async function getNameCity() {
+    let region = await api.get(`/getCitys`);
+    setListaR(
+      region.data.map((item) => {
+        return {
+          nome:item,
+          value: item,
+          id: item,
+        };
+      }),
+    );
   }
 
   useEffect(() => {
     setRecebido(false);
-  },[regionSelected]);
+  }, [regionSelected]);
 
   useEffect(() => {
     setRecebido(false);
@@ -88,62 +137,56 @@ export default function valRegiao({isSale, firstYear, lastYear}) {
     }
   }, [apiGet]);
 
-  const [venda, setVenda] = useState();
+  useEffect(() => {
+    if (region !== 'capital') {
+      getNameCity();
+    }
+  }, []);
 
   useEffect(() => {
     if (!recebido) {
       if (isSale === 0) {
-        getApiVenda();
+        if (region === 'capital') {
+          getApiVenda();
+        } else {
+          if (recebidoNomes) {
+            getApiVendaCity();
+          }
+        }
         setVenda(true);
       } else {
-        getApiAluguel();
+        if (region === 'capital') {
+          getApiAluguel();
+        } else {
+          if (recebidoNomes) {
+            getApiAluguelCity();
+          }
+        }
         setVenda(false);
       }
     }
-  }, [recebido]);
+  }, [recebido, recebidoNomes]);
 
-  const modalConf1 = useRef(null);
-  const modalConf2 = useRef(null);
-  const modalConf3 = useRef(null);
-  const modalConf4 = useRef(null);
-  const modalConf5 = useRef(null);
-  const modalConf6 = useRef(null);
-
-  const [listaNum, setListaNum] = useState([
-    [true, true, false]
-  ]);
+  const [listaNum, setListaNum] = useState([[true, true, false]]);
   const descriptionNum = ['Número de vendas:'];
-  const descriptionNumExtra = [
-    [
-      'Total',
-      'Casas',
-      'Apartamentos',
-    ],
-  ];
+  const descriptionNumExtra = [['Total', 'Casas', 'Apartamentos']];
 
-  const [listaValor, setListaValor] = useState([
-    [true, true]
-  ]);
+  const [listaValor, setListaValor] = useState([[true, true]]);
   const descriptionValor = ['Valor médio de vendas:'];
-  const descriptionValorExtra = [
-    [
-      'Valor de venda',
-      'Valor por m²',
-    ],
-  ];
+  const descriptionValorExtra = [['Valor de venda', 'Valor por m²']];
 
   const [listaTipo, setListaTipo] = useState([
-    [true,false,false],
+    [true, false, false],
     [true, true, false, false, false, false],
     [true, true, false, false, false],
   ]);
-  const descriptionTipo = ['Tipo do imóvel','Número de dormitórios:','Número de garagens:'];
+  const descriptionTipo = [
+    'Tipo do imóvel',
+    'Número de dormitórios:',
+    'Número de garagens:',
+  ];
   const descriptionTipoExtra = [
-    [
-      'Luxo',
-      'Médio',
-      'Simples'
-    ],
+    ['Luxo', 'Médio', 'Simples'],
     [
       'kitnet',
       '1 dormitório',
@@ -161,35 +204,19 @@ export default function valRegiao({isSale, firstYear, lastYear}) {
     ],
   ];
 
-
-  const [listaNumAlug, setListaNumAlug] = useState([
-    [true, false, false]
-  ]);
+  const [listaNumAlug, setListaNumAlug] = useState([[true, false, false]]);
   const descriptionNumAlug = ['Número de alugueis:'];
-  const descriptionNumAlugExtra = [
-    [
-      'Total',
-      'Casas',
-      'Apartamentos',
-    ],
-  ];
+  const descriptionNumAlugExtra = [['Total', 'Casas', 'Apartamentos']];
 
-  const [listaValorAlug, setListaValorAlug] = useState([
-    [true, true]
-  ]);
+  const [listaValorAlug, setListaValorAlug] = useState([[true, true]]);
   const descriptionValorAlug = ['Valor médio de alugueis:'];
-  const descriptionValorAlugExtra = [
-    [
-      'Valor de aluguel',
-      'Valor por m²',
-    ],
-  ];
+  const descriptionValorAlugExtra = [['Valor de aluguel', 'Valor por m²']];
 
   const [listaTipoAlug, setListaTipoAlug] = useState([
     [true, true, false, false, false, false],
     [true, true, false, false, false],
   ]);
-  const descriptionTipoAlug = ['Número de dormitórios:','Número de garagens:'];
+  const descriptionTipoAlug = ['Número de dormitórios:', 'Número de garagens:'];
   const descriptionTipoAlugExtra = [
     [
       'kitnet',
@@ -225,7 +252,6 @@ export default function valRegiao({isSale, firstYear, lastYear}) {
   function ajeitaDescription(desc, list) {
     let cont = 0;
     let description = desc.map((value, index) => {
-      
       let descriptionValue = value
         .filter((item, iIndex) => list[index][iIndex])
         .map((item, iValue) => {
@@ -237,21 +263,17 @@ export default function valRegiao({isSale, firstYear, lastYear}) {
 
     return description;
   }
-
-  function grupoDeValores(api,listaInicial) {
-    let apiT = api.map((itemApi) =>{ 
-      
+  var naoExibir;
+  function grupoDeValores(api, listaInicial) {
+    let apiT = api.map((itemApi) => {
       return apiGet.data[0][itemApi].map((item, index) => {
         let data = apiGet.data.map((valor, vIndex) => valor[itemApi][index]);
         return data;
-      })
-    }
-    );
-    
+      });
+    });
 
     let valor = [];
-    apiT.forEach((item) => item.forEach((value) => valor.push(value)))
-
+    apiT.forEach((item) => item.forEach((value) => valor.push(value)));
 
     let lista = [];
     listaInicial.forEach((value, index) =>
@@ -259,228 +281,172 @@ export default function valRegiao({isSale, firstYear, lastYear}) {
     );
     valor = valor.filter((value, index) => lista[index]);
     valor = valor.map((value, index) => {
+      
+      
       return {data: value, color: () => colors[index]};
     });
 
     return valor;
   }
-
-  //console.log(apiGet.data);
-  return !recebido ? (
-    <Loading/>
-  ) : venda ? (
-    <Container>
-      <ConteinerSelect>
-        <Description>Selecione a região: </Description>
-        <ButtonRegion onPress={() => selectRegionVisible.current?.open()}>
-          <DescriptionButtonRegion>{regionSelected.name}</DescriptionButtonRegion>
-        </ButtonRegion>
-        
-      </ConteinerSelect>
-      <GraficoConteiner>
-        <ConfiguracaoConteiner>
-          <Description>Variação de vendas:</Description>
-          <Configuracao onPress={() => modalConf1.current?.open()}>
-            <Icon name="cog" size={20} color="#fff" />
-          </Configuracao>
-
-          <ModalConfGrafico
-            visible={modalConf1}
-            listaRecebida={listaNum}
-            setLista={setListaNum}
-            description={descriptionNum}
-            descriptionExtra={descriptionNumExtra}
-          />
-        </ConfiguracaoConteiner>
-        <Legenda
-          colors={colors}
-          values={ajeitaDescription(descriptionNumExtra, listaNum)}
-          valuesTipo={descriptionNum}
-        />
-        <Grafico
-          data={apiGet.data[0].numeroVendas
-            .map((item, index) => {
-              let data = {
-                data: apiGet.data.map(
-                  (valor, vIndex) =>
-                    (valor.numeroVendas[index] * 100) /
-                      apiGet.data[0].numeroVendas[index] -
-                    100,
-                ),
-                color: () => colors[index],
-              };
-
-              return data;
-            })
-            .filter((value, index) => {
-              return listaNum[0][index];
-            })}
-          labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo="%"
-        />
-      </GraficoConteiner>
-      <GraficoConteiner>
-        <ConfiguracaoConteiner>
-          <Description>Média de preços:</Description>
-          <Configuracao onPress={() => modalConf2.current?.open()}>
-            <Icon name="cog" size={20} color="#fff" />
-          </Configuracao>
-          <ModalConfGrafico
-            visible={modalConf2}
-            listaRecebida={listaValor}
-            setLista={setListaValor}
-            description={descriptionValor}
-            descriptionExtra={descriptionValorExtra}
-          />
-        </ConfiguracaoConteiner>
-        <Legenda
-          colors={colors}
-          values={ajeitaDescription(descriptionValorExtra, listaValor)}
-          valuesTipo={descriptionValor}
-        />
-        <Grafico
-          data={grupoDeValores(['valorMedio','valorMedioM2'],listaValor)}
-          labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo=""
-        />
-      </GraficoConteiner>
-      <GraficoConteiner>
-        <ConfiguracaoConteiner>
-          <Description>Ocorrência por tipo do imóvel:</Description>
-          <Configuracao onPress={() => modalConf3.current?.open()}>
-            <Icon name="cog" size={20} color="#fff" />
-          </Configuracao>
-          <ModalConfGrafico
-            visible={modalConf3}
-            listaRecebida={listaTipo}
-            setLista={setListaTipo}
-            description={descriptionTipo}
-            descriptionExtra={descriptionTipoExtra}
-          />
-        </ConfiguracaoConteiner>
-        <Legenda
-          colors={colors}
-          values={ajeitaDescription(descriptionTipoExtra, listaTipo)}
-          valuesTipo={descriptionTipo}
-        />
-        <Grafico
-          data={grupoDeValores(['vendaTipoImovel','numDorm','numGar'],listaTipo)}
-          labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo="%"
-        />
-      </GraficoConteiner>
-      <SelectRegion
-          modalVisible={selectRegionVisible}
-          setRegion={setRegionSelected}
-          lista={lista}
-        />
-    </Container>
+  const [description, setDescription] = useState();
+  const [descriptionExtra, setDescriptionExtra] = useState();
+  const [lista, setLista] = useState();
+  const [title, setTitle] = useState();
+  const [parametrosApi, setParametrosApi] = useState();
+  useEffect(() => {
+    if (venda) {
+      if (region !== 'capital') {
+        setTitle([
+          'Variação da média de preços (nobre):',
+          'Variação da média de preços (centro):',
+          'Variação da média de preços (outras Regiões):',
+        ]);
+        setLista([listaValor, listaValor, listaValor]);
+        setDescription([descriptionValor, descriptionValor, descriptionValor]);
+        setDescriptionExtra([
+          descriptionValorExtra,
+          descriptionValorExtra,
+          descriptionValorExtra,
+        ]);
+        setParametrosApi([
+          ['medNobre', 'medNobreM2'],
+          ['medCentro', 'medCentroM2'],
+          ['medOutros', 'medOutrosM2'],
+        ]);
+      } else {
+        setTitle([
+          'Variação de vendas:',
+          'Variação da média de preços:',
+          'Ocorrência por tipo do imóvel:',
+        ]);
+        setLista([listaNum, listaValor, listaTipo]);
+        setDescription([descriptionNum, descriptionValor, descriptionTipo]);
+        setDescriptionExtra([
+          descriptionNumExtra,
+          descriptionValorExtra,
+          descriptionTipoExtra,
+        ]);
+        setParametrosApi([
+          ['numeroVendas'],
+          ['valorMedio', 'valorMedioM2'],
+          ['vendaTipoImovel', 'numDorm', 'numGar'],
+        ]);
+      }
+      
+    } else {
+      if (region === 'capital') {
+        setTitle([
+          'Variação de alugueis:',
+          'Varição da média de preços:',
+          'Ocorrência por tipo do imóvel:',
+        ]);
+        setLista([listaNumAlug, listaValorAlug, listaTipoAlug]);
+        setDescription([
+          descriptionNumAlug,
+          descriptionValorAlug,
+          descriptionTipoAlug,
+        ]);
+        setDescriptionExtra([
+          descriptionNumAlugExtra,
+          descriptionValorAlugExtra,
+          descriptionTipoAlugExtra,
+        ]);
+        setParametrosApi([
+          ['numeroAluguel'],
+          ['valorMedio', 'valorMedioM2'],
+          ['aluguelDorm', 'aluguelGar'],
+        ]);
+      } else {
+        setTitle([
+          'Variação da média de preços (nobre):',
+          'Variação da média de preços (centro):',
+          'Variação da média de preços (outras Regiões):',
+        ]);
+        setLista([listaValorAlug, listaValorAlug, listaValorAlug]);
+        setDescription([
+          descriptionValorAlug,
+          descriptionValorAlug,
+          descriptionValorAlug,
+        ]);
+        setDescriptionExtra([
+          descriptionValorAlugExtra,
+          descriptionValorAlugExtra,
+          descriptionValorAlugExtra,
+        ]);
+        setParametrosApi([
+          ['medNobre', 'medNobreM2'],
+          ['medCentro', 'medCentroM2'],
+          ['medOutros', 'medOutrosM2'],
+        ]);
+      }
+    }
+  }, [venda]);
+  function RenderItem(props) {
+    const [listaItem, setListaItem] = useState(lista[props.index]);
+    const [modalConf,setModalConf] = useState(false);
+    const descriptionItem = description[props.index];
+    const descriptionItemExtra = descriptionExtra[props.index];
+    const parametrosApiItem = parametrosApi[props.index];
     
+    return (
+      <GraficoConteiner>
+        <ConfiguracaoConteiner>
+          <View style={{width: Dimensions.get('window').width * 0.8,}}>
+            <Description style={{flexWrap:'wrap'}} >{title[props.index]}</Description>
+          </View>
+          <Configuracao onPress={() => setModalConf(true)}>
+            <Icon name="cog" size={20} color="#fff" />
+          </Configuracao>
+          <ModalConfGrafico
+            visible={modalConf}
+            setVisible={setModalConf}
+            listaRecebida={listaItem}
+            setLista={setListaItem}
+            description={descriptionItem}
+            descriptionExtra={descriptionItemExtra}
+          />
+        </ConfiguracaoConteiner>
+        <Legenda
+          colors={colors}
+          values={ajeitaDescription(descriptionItemExtra, listaItem)}
+          valuesTipo={descriptionItem}
+        />
+        <Grafico
+          data={grupoDeValores(parametrosApiItem, listaItem)}
+          labels={apiGet.data.map((item, index) => item.ano)}
+          sufixo="%"
+        />
+      </GraficoConteiner>
+    );
+  }
+
+  //.log(apiGet.data);
+  return !recebido ? (
+    <Loading />
   ) : (
     <Container>
       <ConteinerSelect>
         <Description>Selecione a região: </Description>
-        <ButtonRegion onPress={() => selectRegionVisible.current?.open()}>
-          <DescriptionButtonRegion>{regionSelected.name}</DescriptionButtonRegion>
+        <ButtonRegion
+          onPress={() => setSelectRegionVisible(!selectRegionVisible)}>
+          <DescriptionButtonRegion>
+            {regionSelected.name}
+          </DescriptionButtonRegion>
         </ButtonRegion>
-        <SelectRegion
-          modalVisible={selectRegionVisible}
-          setRegion={setRegionSelected}
-          lista={lista}
-        />
       </ConteinerSelect>
-      <GraficoConteiner>
-        <ConfiguracaoConteiner>
-          <Description>Variação de alugueis:</Description>
-          <Configuracao onPress={() => modalConf4.current?.open()}>
-            <Icon name="cog" size={20} color="#fff" />
-          </Configuracao>
-
-          <ModalConfGrafico
-            visible={modalConf4}
-            listaRecebida={listaNumAlug}
-            setLista={setListaNumAlug}
-            description={descriptionNumAlug}
-            descriptionExtra={descriptionNumAlugExtra}
-          />
-        </ConfiguracaoConteiner>
-        <Legenda
-          colors={colors}
-          values={ajeitaDescription(descriptionNumAlugExtra, listaNumAlug)}
-          valuesTipo={descriptionNumAlug}
-        />
-        <Grafico
-          data={apiGet.data[0].numeroAluguel
-            .map((item, index) => {
-              let data = {
-                data: apiGet.data.map(
-                  (valor, vIndex) =>
-                    (valor.numeroAluguel[index] * 100) /
-                      apiGet.data[0].numeroAluguel[index] -
-                    100,
-                ),
-                color: () => colors[index],
-              };
-
-              return data;
-            })
-            .filter((value, index) => {
-              return listaNumAlug[0][index];
-            })}
-          labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo="%"
-        />
-      </GraficoConteiner>
-      <GraficoConteiner>
-        <ConfiguracaoConteiner>
-          <Description>Média de preços:</Description>
-          <Configuracao onPress={() => modalConf5.current?.open()}>
-            <Icon name="cog" size={20} color="#fff" />
-          </Configuracao>
-          <ModalConfGrafico
-            visible={modalConf5}
-            listaRecebida={listaValorAlug}
-            setLista={setListaValorAlug}
-            description={descriptionValorAlug}
-            descriptionExtra={descriptionValorAlugExtra}
-          />
-        </ConfiguracaoConteiner>
-        <Legenda
-          colors={colors}
-          values={ajeitaDescription(descriptionValorAlugExtra, listaValorAlug)}
-          valuesTipo={descriptionValorAlug}
-        />
-        <Grafico
-          data={grupoDeValores(['valorMedio','valorMedioM2'],listaValorAlug)}
-          labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo=""
-        />
-      </GraficoConteiner>
-      <GraficoConteiner>
-        <ConfiguracaoConteiner>
-          <Description>Ocorrência por número de dormitórios:</Description>
-          <Configuracao onPress={() => modalConf6.current?.open()}>
-            <Icon name="cog" size={20} color="#fff" />
-          </Configuracao>
-          <ModalConfGrafico
-            visible={modalConf6}
-            listaRecebida={listaTipoAlug}
-            setLista={setListaTipoAlug}
-            description={descriptionTipoAlug}
-            descriptionExtra={descriptionTipoAlugExtra}
-          />
-        </ConfiguracaoConteiner>
-        <Legenda
-          colors={colors}
-          values={ajeitaDescription(descriptionTipoAlugExtra, listaTipoAlug)}
-          valuesTipo={descriptionTipoAlug}
-        />
-        <Grafico
-          data={grupoDeValores(['aluguelDorm','aluguelGar'],listaTipoAlug)}
-          labels={apiGet.data.map((item, index) => item.ano)}
-          sufixo="%"
-        />
-      </GraficoConteiner>
+      <FlatList
+        data={title}
+        renderItem={({index}) => <RenderItem index={index} />}
+        style={{backgroundColor: '#13131a'}}
+        keyExtractor={(item, index) => index.toString()}
+      />
+      <SelectRegion
+        modalVisible={selectRegionVisible}
+        setModalVisible={setSelectRegionVisible}
+        setRegion={setRegionSelected}
+        region={regionSelected}
+        lista={listaR}
+      />
     </Container>
   );
   //});

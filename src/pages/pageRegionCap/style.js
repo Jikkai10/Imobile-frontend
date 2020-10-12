@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 
-export const Container = styled.ScrollView`
+export const Container = styled.View`
     flex: 1;
     background: #13131a;
 `;
@@ -51,6 +51,7 @@ export const GraficoConteiner = styled.View`
 export const ConfiguracaoConteiner = styled.View`
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
 `;
 
 export const YearButton = styled.TouchableOpacity`

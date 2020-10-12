@@ -1,5 +1,5 @@
-import React from 'react';
-import {Modal, FlatList,Dimensions} from 'react-native';
+import React, {useEffect,useState} from 'react';
+import {Modal, FlatList, Dimensions, StyleSheet} from 'react-native';
 import {
   Container,
   TextButton,
@@ -7,50 +7,90 @@ import {
   TextConteiner,
   Description,
 } from './style';
-import {Modalize} from 'react-native-modalize';
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
 
 export default function selectRegion({
   setRegion,
+  region,
   lista,
   modalVisible,
+  setModalVisible,
 }) {
-  let value;
+  const position = useSharedValue(Dimensions.get('window').height);
+  useEffect(() => {
+    if (modalVisible) {
+      position.value = withTiming(0, {
+        duration: 500,
+      });
+    }
+  }, [modalVisible]);
+
+  const ContainerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: position.value,
+        },
+      ],
+    };
+  });
   function RenderItem(props) {
     return (
       <ButtonRegion
         onPress={() => {
-          
-          value = {value: props.data.value, name: props.data.nome};
-          modalVisible.current?.close();
+          setRegion({value: props.data.value, name: props.data.nome});
+          position.value = withTiming(
+            Dimensions.get('window').height,
+            {
+              duration: 500,
+            },
+            () => {
+              setModalVisible(false);
+            },
+          );
         }}>
         <TextButton>{props.data.nome}</TextButton>
       </ButtonRegion>
     );
   }
   return (
-    <Modalize
-      ref={modalVisible}
-      disableScrollIfPossible
-      withReactModal
-      modalTopOffset={20}
-      //modalHeight={}
-      
-      onClosed={() => setRegion(value)}
-      panGestureEnabled={false}
-      withHandle={false}
-      modalStyle={{backgroundColor: null}}>
-      <Container>
-        <TextConteiner>
-          <Description>Selecione uma região:</Description>
-        </TextConteiner>
+    <Modal
+      animationType="none"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        setModalVisible(false);
+      }}>
+      <Animated.View style={[style.container,ContainerStyle]}>
+        <TextConteiner><Description>Selecione uma região</Description></TextConteiner>
         <FlatList
-          //contentContainerStyle={styles.list}
           data={lista}
           renderItem={({item}) => <RenderItem data={item} />}
-          enableEmptySections={true}
           showsVerticalScrollIndicator={false}
         />
-      </Container>
-    </Modalize>
+      </Animated.View>
+    </Modal>
   );
 }
+
+const style = StyleSheet.create({
+  container: {
+    margin: 5,
+    backgroundColor: '#13131a',
+    borderRadius: 20,
+    paddingBottom: 10,
+    paddingHorizontal: 15,
+    width: Dimensions.get('window').width * 0.55,
+    maxHeight: 200,
+    alignSelf: 'center',
+    marginTop: 7,
+    elevation: 5,
+  },
+});

@@ -5,7 +5,7 @@ import {StyleSheet, View, Dimensions, Modal, Text} from 'react-native';
 import ModalGrafico from '../modalGrafico';
 import {ModalContainer} from '../../pages/pageRegionCap/regions/style';
 
-export default function grafico({labels, data, legenda, sufixo = ''}) {
+export default function grafico({labels, data, legenda, sufixo = '',naoExibir}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [ano, setAno] = useState();
   const [color, setColor] = useState();
@@ -29,23 +29,32 @@ export default function grafico({labels, data, legenda, sufixo = ''}) {
             return `${val.toFixed(0)} K`;
           }
         }}*/
-        width={Dimensions.get('window').width * 0.97}
+        width={Dimensions.get('window').width }
         height={300}
         verticalLabelRotation={70}
         yAxisSuffix={sufixo}
-        
+        formatYLabel={(yValue) => {
+          
+          if(yValue == -100){
+            return 'N/A';
+          }
+          return yValue;
+        }}
         //yAxisLabel={yPrefixo}
         //yLabelsOffset={5}
+        
         chartConfig={{
           backgroundColor: '#13131a',
           backgroundGradientFrom: '#13131a',
           backgroundGradientTo: '#13131a',
+          
           decimalPlaces: 0, // optional, defaults to 2dp
           color: (opacity = 1) => `rgb(255,255,255)`,
           labelColor: () => `#fff`,
           propsForLabels: {fontWeight: 'bold'},
           style: {borderRadius: 16},
           propsForDots: {r: '6', strokeWidth: '2', stroke: '#000'},
+          
         }}
         onDataPointClick={({value, index, getColor}) => {
           setModalVisible(true);

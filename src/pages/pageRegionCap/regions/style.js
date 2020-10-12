@@ -1,12 +1,12 @@
 import styled from 'styled-components/native';
 
-export const Container = styled.ScrollView`
+export const Container = styled.View`
     flex: 1;
     background: #fff;
 `;
 
 export const Configuracao = styled.TouchableOpacity`
-  margin-right: 5px;
+  margin-right: 10px;
   border-radius: 5px;
   align-items: center;
   width: 30px;
