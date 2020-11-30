@@ -13,7 +13,7 @@ export const RadioButtonContainer = styled.TouchableOpacity`
 export const ContainerRadio = styled.TouchableOpacity`
   flex: 1;
   align-items: center;
-  flexDirection: row;
+  flex-direction: row;
 `;
 
 export const InfoExtra = styled.View`

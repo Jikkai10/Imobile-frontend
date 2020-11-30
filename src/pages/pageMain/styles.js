@@ -57,13 +57,12 @@ export const ContainerList = styled.View`
 
 export const ButtonAvaliador = styled.TouchableOpacity`
     background-color: #13131a;
-    border-color: #fff;
     width: 50%;
-    align-items: center;
-    border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
-    border-width: 1px;
+    border-width: 2px;
+    border-color: #191922;
     border-left-width: 0px;
+    border-bottom-width: 0px;
     padding-left: 5px;
 `;
 

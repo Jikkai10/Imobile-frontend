@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Grafico from '../../../components/grafico';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {View, Modal, FlatList,Dimensions} from 'react-native';
+import {View, Modal, FlatList, Dimensions} from 'react-native';
 import {
   Container,
   ModalContainer,
@@ -14,39 +14,61 @@ import {
 import {Configuracao} from './style';
 import api from '../../../services/api';
 import Loading from '../../../components/loading';
+import Error from '../../../components/error';
 import ModalConfGrafico from '../../../components/modalConfGrafico';
 import Legenda from '../../../components/legenda';
 
 export default function capital({route, isSale, firstYear, lastYear, region}) {
   const [apiGet, setApiGet] = useState();
   const [recebido, setRecebido] = useState(false);
+  const [error, setError] = useState(false);
 
   const [venda, setVenda] = useState();
 
   const [checked, setChecked] = useState(false);
 
   async function getApiVendas() {
-    let apiCap = await api.get(`/vendasCap/ano/${firstYear}/${lastYear}`);
-    setApiGet(apiCap);
+    try {
+      let apiCap = await api.get(`/vendasCap/ano/${firstYear}/${lastYear}`);
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
 
   async function getApiAluguel() {
-    let apiCap = await api.get(`/aluguelCap/ano/${firstYear}/${lastYear}`);
-    setApiGet(apiCap);
+    try {
+      let apiCap = await api.get(`/aluguelCap/ano/${firstYear}/${lastYear}`);
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
 
   async function getApiVendasRegion() {
-    let apiCap = await api.get(
-      `/vendasRegion/${region}/total/ano/${firstYear}/${lastYear}`,
-    );
-    setApiGet(apiCap);
+    try {
+      let apiCap = await api.get(
+        `/vendasRegion/${region}/total/ano/${firstYear}/${lastYear}`,
+      );
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
 
   async function getApiAluguelRegion() {
-    let apiCap = await api.get(
-      `/aluguelRegion/${region}/total/ano/${firstYear}/${lastYear}`,
-    );
-    setApiGet(apiCap);
+    try {
+      let apiCap = await api.get(
+        `/aluguelRegion/${region}/total/ano/${firstYear}/${lastYear}`,
+      );
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
 
   useEffect(() => {
@@ -60,6 +82,26 @@ export default function capital({route, isSale, firstYear, lastYear, region}) {
   useEffect(() => {
     setRecebido(false);
   }, [isSale]);
+
+  useEffect(() => {
+    if (error) {
+      if (isSale === 0) {
+        if (region === 'capital') {
+          getApiVendas();
+        } else {
+          getApiVendasRegion();
+        }
+        setVenda(true);
+      } else {
+        if (region === 'capital') {
+          getApiAluguel();
+        } else {
+          getApiAluguelRegion();
+        }
+        setVenda(false);
+      }
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!recebido) {
@@ -329,7 +371,7 @@ export default function capital({route, isSale, firstYear, lastYear, region}) {
 
   function RenderItem(props) {
     const [listaItem, setListaItem] = useState(lista[props.index]);
-    const [modalConf,setModalConf] = useState(false);
+    const [modalConf, setModalConf] = useState(false);
     const descriptionItem = description[props.index];
     const descriptionItemExtra = descriptionExtra[props.index];
     const parametrosApiItem = parametrosApi[props.index];
@@ -368,7 +410,9 @@ export default function capital({route, isSale, firstYear, lastYear, region}) {
     );
   }
 
-  return !recebido ? (
+  return error ? (
+    <Error />
+  ) : !recebido ? (
     <Loading />
   ) : (
     <FlatList

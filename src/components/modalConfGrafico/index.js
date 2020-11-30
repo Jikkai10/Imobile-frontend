@@ -4,7 +4,7 @@ import Animated, {
   withTiming,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import {Modal, View, StyleSheet, FlatList} from 'react-native';
+import {Modal, View, StyleSheet, FlatList, Dimensions} from 'react-native';
 //import Modal from 'react-native-modal';
 import {
   RadioButtonContainer,
@@ -35,11 +35,27 @@ function modalConfGrafico({
   visible,
 }) {
   const lista = [...listaRecebida];
-  const [isLast, setIsLast] = useState();
 
-  const [open, setOpen] = useState(false);
+  const positionModal = useSharedValue(Dimensions.get('window').height);
+  useEffect(() => {
+    if (visible) {
+      positionModal.value = withTiming(0, {
+        duration: 500,
+      });
+    }
+  }, [visible]);
 
-  function RenderItem({item, indexI: index}) {
+  const ContainerModalStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: positionModal.value,
+        },
+      ],
+    };
+  });
+
+  function RenderItem({item, index}) {
     const [checked, setChecked] = useState(false);
     const [quant, setQuant] = useState(0);
     const height = useSharedValue(0);
@@ -108,13 +124,9 @@ function modalConfGrafico({
         </RadioButtonContainer>
 
         <Animated.View style={[{marginLeft: 10}, ContainerStyle]}>
-          
           <FlatList
             data={descriptionExtra[index]}
-            
             scrollEnabled={false}
-            
-            
             renderItem={(props) => (
               <RenderItemExtra
                 setAviso={setAviso}
@@ -129,7 +141,7 @@ function modalConfGrafico({
                 index={index}
               />
             )}
-            keyExtractor={item=>item}
+            keyExtractor={(item) => item}
             showsVerticalScrollIndicator={false}
           />
         </Animated.View>
@@ -152,7 +164,7 @@ function modalConfGrafico({
     setIsLastExtra,
     isLastExtra,
     isMax,
-    setIsMax
+    setIsMax,
   }) {
     const [checkedExtra, setCheckedExtra] = useState(lista[index][indexExtra]);
     const opacity = useSharedValue(0);
@@ -229,6 +241,7 @@ function modalConfGrafico({
       </Animated.View>
     );
   }
+
   return (
     <>
       <Modal
@@ -238,11 +251,11 @@ function modalConfGrafico({
         onRequestClose={() => {
           setVisible(false);
         }}>
-        <ModalContainer style={{maxHeight: 300}}>
+        <Animated.View style={[style.modalContainer, ContainerModalStyle]}>
           <FlatList
             data={description}
             renderItem={({item, index}) => (
-              <RenderItem item={item} indexI={index} />
+              <RenderItem item={item} index={index} />
             )}
             enableEmptySections={true}
             keyExtractor={(item) => item}
@@ -250,15 +263,35 @@ function modalConfGrafico({
           />
           <ExitButton
             onPress={() => {
-              setVisible(false);
-              setLista(lista);
+              
+              positionModal.value = withTiming(
+                Dimensions.get('window').height,
+                {
+                  duration: 500,
+                },
+                () => {
+                  setVisible(false);
+                  setLista(lista);
+                },
+              );
             }}>
             <TextExitButton>OK</TextExitButton>
           </ExitButton>
-        </ModalContainer>
+        </Animated.View>
       </Modal>
     </>
   );
 }
+
+const style = StyleSheet.create({
+  modalContainer: {
+    margin: 5,
+    backgroundColor: '#13131a',
+    borderRadius: 20,
+    maxHeight: 300,
+    padding: 20,
+    alignItems: 'flex-start',
+  },
+});
 
 export default modalConfGrafico;

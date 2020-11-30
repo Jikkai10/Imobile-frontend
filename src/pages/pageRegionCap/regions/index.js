@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, FlatList,Dimensions} from 'react-native';
+import {View, Text, FlatList, Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   ConteinerSelect,
@@ -19,6 +19,7 @@ import SelectRegion from '../../../components/modalSelectRegiao';
 import Grafico from '../../../components/grafico';
 import api from '../../../services/api';
 import Loading from '../../../components/loading';
+import Error from '../../../components/error';
 import selectRegion from '../../../components/modalSelectRegiao';
 
 function ordenarPorMes(a, b) {
@@ -30,6 +31,7 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
   const [apiGet, setApiGet] = useState();
   const [venda, setVenda] = useState();
   const [recebido, setRecebido] = useState(false);
+  const [error, setError] = useState(false);
 
   const [selectRegionVisible, setSelectRegionVisible] = useState(false);
   const [listaR, setListaR] = useState([
@@ -65,32 +67,51 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
   });
 
   async function getApiVenda() {
-    let apiCap = await api.get(
-      `/vendasRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
-    );
-    setApiGet(apiCap);
+    try {
+      let apiCap = await api.get(
+        `/vendasRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+      );
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
 
   async function getApiVendaCity() {
-    let apiCap = await api.get(
-      `/vendasCity/${region}/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
-    );
-    setApiGet(apiCap);
-    
+    try {
+      let apiCap = await api.get(
+        `/vendasCity/${region}/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+      );
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
 
   async function getApiAluguel() {
-    let apiCap = await api.get(
-      `/aluguelRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
-    );
-    setApiGet(apiCap);
+    try {
+      let apiCap = await api.get(
+        `/aluguelRCap/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+      );
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
 
   async function getApiAluguelCity() {
-    let apiCap = await api.get(
-      `/aluguelCity/${region}/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
-    );
-    setApiGet(apiCap);
+    try {
+      let apiCap = await api.get(
+        `/aluguelCity/${region}/${regionSelected.value}/ano/${firstYear}/${lastYear}`,
+      );
+      setApiGet(apiCap);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
   const isFirstRun = useRef(true);
   const [recebidoNomes, setRecebidoNomes] = useState(false);
@@ -104,11 +125,11 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
   }, [listaR]);
 
   async function getNameCity() {
-    let region = await api.get(`/getCitys`);
+    let regionApi = await api.get(`/getCitys/${region}`);
     setListaR(
-      region.data.map((item) => {
+      regionApi.data.map((item) => {
         return {
-          nome:item,
+          nome: item,
           value: item,
           id: item,
         };
@@ -142,6 +163,30 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
       getNameCity();
     }
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      if (isSale === 0) {
+        if (region === 'capital') {
+          getApiVenda();
+        } else {
+          if (recebidoNomes) {
+            getApiVendaCity();
+          }
+        }
+        setVenda(true);
+      } else {
+        if (region === 'capital') {
+          getApiAluguel();
+        } else {
+          if (recebidoNomes) {
+            getApiAluguelCity();
+          }
+        }
+        setVenda(false);
+      }
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!recebido) {
@@ -281,8 +326,6 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
     );
     valor = valor.filter((value, index) => lista[index]);
     valor = valor.map((value, index) => {
-      
-      
       return {data: value, color: () => colors[index]};
     });
 
@@ -332,7 +375,6 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
           ['vendaTipoImovel', 'numDorm', 'numGar'],
         ]);
       }
-      
     } else {
       if (region === 'capital') {
         setTitle([
@@ -383,16 +425,18 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
   }, [venda]);
   function RenderItem(props) {
     const [listaItem, setListaItem] = useState(lista[props.index]);
-    const [modalConf,setModalConf] = useState(false);
+    const [modalConf, setModalConf] = useState(false);
     const descriptionItem = description[props.index];
     const descriptionItemExtra = descriptionExtra[props.index];
     const parametrosApiItem = parametrosApi[props.index];
-    
+
     return (
       <GraficoConteiner>
         <ConfiguracaoConteiner>
-          <View style={{width: Dimensions.get('window').width * 0.8,}}>
-            <Description style={{flexWrap:'wrap'}} >{title[props.index]}</Description>
+          <View style={{width: Dimensions.get('window').width * 0.8}}>
+            <Description style={{flexWrap: 'wrap'}}>
+              {title[props.index]}
+            </Description>
           </View>
           <Configuracao onPress={() => setModalConf(true)}>
             <Icon name="cog" size={20} color="#fff" />
@@ -421,7 +465,9 @@ export default function valRegiao({isSale, firstYear, lastYear, region}) {
   }
 
   //.log(apiGet.data);
-  return !recebido ? (
+  return error ? (
+    <Error />
+  ) : !recebido ? (
     <Loading />
   ) : (
     <Container>
